@@ -1,0 +1,14 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}{{ 'Edit category' if category else 'New category' }} — CampusBite{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / categories</div><h1>{{ 'Refine a category.' if category else 'Name a new category.' }}</h1><p>Keep labels short and familiar for a quick menu scan.</p></div><a class="btn btn-quiet" href="{{ url_for('admin.categories') }}">← Categories</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}{% set v = form_values|default({},true) %}
+<section class="admin-panel"><form class="admin-form" method="post" action="{{ url_for('admin.category_edit', id=category.id) if category else url_for('admin.category_new') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="form-grid">
+  <div class="field"><label for="category-name">Category name</label><input id="category-name" name="name" required value="{{ v.name|default(category.name|default('',true),true) }}" data-testid="input-category-name"></div>
+  <div class="field"><label for="category-order">Display order</label><input id="category-order" type="number" name="sort_order" value="{{ v.sort_order|default(category.sort_order|default(0),true) }}"></div>
+  <div class="field full"><label for="category-description">Short description</label><textarea id="category-description" name="description">{{ v.description|default(category.description|default('',true),true) }}</textarea></div>
+  <label class="checkbox-field"><input type="checkbox" name="is_active" value="1" {% if v.is_active|default(category.is_active|default(true)) %}checked{% endif %}> Show to students</label>
+  <div class="full" style="display:flex;gap:10px"><button class="btn" type="submit" data-testid="button-save-category">Save category</button><a class="btn btn-quiet" href="{{ url_for('admin.categories') }}">Cancel</a></div>
+</div></form></section>
+{% endblock %}

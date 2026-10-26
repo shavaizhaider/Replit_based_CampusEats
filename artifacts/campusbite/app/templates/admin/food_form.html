@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}{{ 'Edit food' if food else 'Add food' }} — CampusBite{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / menu / {{ 'edit' if food else 'new dish' }}</div><h1>{{ 'A dish worth keeping fresh.' if food else 'Add a new dish.' }}</h1><p>Clear details help students choose quickly and confidently.</p></div><a class="btn btn-quiet" href="{{ url_for('admin.foods') }}">← Food items</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+{% set v = form_values|default({},true) %}
+<section class="admin-panel"><form class="admin-form" method="post" action="{{ url_for('admin.food_edit', id=food.id) if food else url_for('admin.food_new') }}" data-testid="form-food">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="form-grid">
+    <div class="field"><label for="food-name">Dish name</label><input id="food-name" name="name" required value="{{ v.name|default(food.name|default('',true),true) }}" data-testid="input-food-name"></div>
+    <div class="field"><label for="food-category">Category</label><select id="food-category" name="category_id" required data-testid="select-food-category"><option value="">Choose category</option>{% for category in categories|default([]) %}<option value="{{ category.id }}" {% if v.category_id|default(food.category_id|default(''))|string == category.id|string %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+    <div class="field"><label for="food-price">Price (PKR)</label><input id="food-price" name="price" type="number" min="0" step="1" required value="{{ v.price|default(food.price|default('',true),true) }}" data-testid="input-food-price"></div>
+    <div class="field"><label for="food-image">Food image URL</label><input id="food-image" name="image_url" value="{{ v.image_url|default(food.image_url|default('',true),true) }}" placeholder="/static/images/dish.jpg" data-testid="input-food-image"><span class="field-help">Use an existing local image path or a trusted HTTPS image URL.</span></div>
+    <div class="field full"><label for="food-description">Description</label><textarea id="food-description" name="description">{{ v.description|default(food.description|default('',true),true) }}</textarea></div>
+    <div class="field full"><label for="food-ingredients">Ingredients</label><textarea id="food-ingredients" name="ingredients" maxlength="1000">{{ v.ingredients|default(food.ingredients|default('',true),true) }}</textarea></div>
+    <div class="field"><label for="food-allergens">Allergen notes</label><input id="food-allergens" name="allergens" maxlength="500" value="{{ v.allergens|default(food.allergens|default('',true),true) }}" placeholder="Only list confirmed allergens"></div>
+    <div class="field"><label for="food-spice">Spice level</label><select id="food-spice" name="spice_level">{% for level in spice_levels|default(['none','mild','medium','hot']) %}<option value="{{ level }}" {% if v.spice_level|default(food.spice_level|default('mild')) == level %}selected{% endif %}>{{ level|title }}</option>{% endfor %}</select></div>
+    <div class="field full"><label for="food-tags">Dietary tags</label><input id="food-tags" name="dietary_tags" value="{{ v.dietary_tags|default(food.dietary_tags|join(', ') if food and food.dietary_tags else '',true) }}" placeholder="dairy-free, vegan"><span class="field-help">Comma-separated. Only use claims confirmed by the café.</span></div>
+    <label class="checkbox-field"><input type="checkbox" name="is_vegetarian" value="1" {% if v.is_vegetarian|default(food.is_vegetarian|default(false)) %}checked{% endif %}> Vegetarian</label>
+    <label class="checkbox-field"><input type="checkbox" name="is_vegan" value="1" {% if v.is_vegan|default(food.is_vegan|default(false)) %}checked{% endif %}> Vegan</label>
+    <label class="checkbox-field"><input type="checkbox" name="is_active" value="1" {% if v.is_active|default(food.is_active|default(true)) %}checked{% endif %}> Visible on menu</label>
+    <div class="full" style="display:flex;gap:10px;margin-top:8px"><button class="btn" type="submit" data-testid="button-save-food">{{ 'Save changes' if food else 'Add dish' }}</button><a class="btn btn-quiet" href="{{ url_for('admin.foods') }}">Cancel</a></div>
+  </div>
+</form></section>
+{% endblock %}

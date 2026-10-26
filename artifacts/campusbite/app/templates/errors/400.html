@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Please try again — CampusBite{% endblock %}
+{% block content %}
+<section class="container page-intro">
+  <div class="eyebrow">That didn’t go through</div>
+  <h1>One more try.</h1>
+  <p class="lede">{{ message|default('Please check your request and try again.') }}</p>
+  <a class="btn" href="{{ url_for('public.menu') }}">Back to the menu</a>
+</section>
+{% endblock %}

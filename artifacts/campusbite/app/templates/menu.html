@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Today’s menu — CampusBite{% endblock %}
+{% block content %}
+<div class="container page-intro">
+  <div class="eyebrow">A good break starts here</div><h1>Today’s menu</h1>
+  <p class="lede">Fresh options, honest prices, and live stock so you can choose before you queue.</p>
+  {% if error %}<div class="error-box" role="alert" data-testid="status-menu-error">{{ error }}</div>{% endif %}
+</div>
+<section class="container" data-availability-poll data-date="{{ selected_date.isoformat() if selected_date else '' }}" data-meal="{{ selected_meal|default('Lunch') }}">
+  <form class="filter-panel" method="get" action="{{ url_for('public.menu') }}" data-testid="form-menu-filters">
+    <div class="filter-grid">
+      <div class="field search-field"><label for="search">Find a dish</label><input id="search" type="search" name="q" value="{{ filters.q|default(request.args.get('q','')) }}" placeholder="Try biryani, chai… " data-testid="input-menu-search"></div>
+      <div class="field"><label for="date">Date</label><input id="date" type="date" name="date" value="{{ selected_date.isoformat() if selected_date else request.args.get('date','') }}" data-testid="input-menu-date"></div>
+      <div class="field"><label for="meal">Meal time</label><select id="meal" name="meal" data-testid="select-menu-meal">{% for meal in meals|default(['Breakfast','Lunch','Evening/Dinner']) %}<option value="{{ meal }}" {% if selected_meal|default('Lunch') == meal %}selected{% endif %}>{{ meal }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="category">Category</label><select id="category" name="category" data-testid="select-menu-category"><option value="">All categories</option>{% for category in categories|default([]) %}<option value="{{ category.id }}" {% if selected_category|string == category.id|string %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="budget">Budget (PKR)</label><input id="budget" name="budget" type="number" min="0.01" step="0.01" value="{{ filters.budget if filters.budget else request.args.get('budget','') }}" placeholder="e.g. 300" data-testid="input-menu-budget"></div>
+      <div class="field"><label for="dietary">Dietary preference</label><select id="dietary" name="dietary"><option value="">Any</option>{% for tag in dietary_tags|default([]) %}<option value="{{ tag }}" {% if filters.dietary_tag == tag %}selected{% endif %}>{{ tag|replace('-', ' ')|title }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="spice">Spice level</label><select id="spice" name="spice"><option value="">Any</option>{% for level in ['mild','medium','hot'] %}<option value="{{ level }}" {% if filters.spice_level == level %}selected{% endif %}>{{ level|title }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="sort">Sort by price</label><select id="sort" name="sort"><option value="price-asc" {% if filters.sort != 'price-desc' %}selected{% endif %}>Lowest first</option><option value="price-desc" {% if filters.sort == 'price-desc' %}selected{% endif %}>Highest first</option></select></div>
+      <label class="checkbox-field"><input type="checkbox" name="available" value="1" {% if filters.available_only %}checked{% endif %}> In stock only</label>
+      <label class="checkbox-field"><input type="checkbox" name="vegetarian" value="1" {% if filters.vegetarian %}checked{% endif %}> Vegetarian</label>
+      <label class="checkbox-field"><input type="checkbox" name="non_vegetarian" value="1" {% if filters.non_vegetarian %}checked{% endif %}> Non-vegetarian</label>
+      <button class="btn" type="submit" data-testid="button-apply-filters">Show menu</button>
+      <a class="btn btn-quiet" href="{{ url_for('public.menu', date=selected_date.isoformat(), meal=selected_meal) }}">Clear filters</a>
+    </div>
+  </form>
+  <nav class="meal-tabs" aria-label="Choose a meal">
+    {% for meal in meals %}
+      <a class="meal-tab {% if meal == selected_meal %}is-active{% endif %}" href="{{ url_for('public.menu', date=selected_date.isoformat(), meal=meal) }}" {% if meal == selected_meal %}aria-current="page"{% endif %}>{{ meal }}</a>
+    {% endfor %}
+  </nav>
+  <div class="section-head"><div><div class="eyebrow">{{ selected_meal|default('Lunch') }}{% if selected_date %} · {{ selected_date.strftime('%A, %d %B') }}{% endif %}</div><h2>On the counter</h2></div><span class="field-help" data-poll-state role="status">Checking saved stock…</span></div>
+  {% set items = menu|default(schedules|default([])) %}
+  {% if items %}<div class="food-grid">{% for schedule in items %}{% include "partials/food_card.html" %}{% endfor %}</div>
+  {% else %}<div class="empty-state" data-testid="empty-menu"><h3>{% if filters.budget %}No matching food found within your budget.{% else %}No food is scheduled for this meal yet.{% endif %}</h3><p>Try changing your date, meal, or filters.</p><a class="btn btn-quiet" href="{{ url_for('public.menu', date=selected_date.isoformat(), meal=selected_meal) }}">Clear filters</a></div>{% endif %}
+</section>
+{% endblock %}

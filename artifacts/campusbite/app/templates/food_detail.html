@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ food.name }} — CampusBite{% endblock %}
+{% block content %}
+<section class="container page-intro"><a class="text-link" href="{{ url_for('public.menu') }}">← Back to menu</a></section>
+<section class="container detail-layout">
+  <div class="detail-image"><img data-fallback src="{{ food.image_url|default(food.photo_url|default('',true),true) }}" alt="{{ food.name }}" loading="lazy"><div class="photo-fallback" hidden aria-hidden="true">Fresh from the campus kitchen</div></div>
+  <div class="detail-copy">
+    <div class="eyebrow">{{ food.category.name|default('Campus kitchen') }}</div><h1>{{ food.name }}</h1>
+    <div class="rating" aria-label="Rated {{ avg_rating|default(food.avg_rating|default('not yet rated')) }} out of 5">★ {{ avg_rating|default(food.avg_rating|default('New')) }} <span>· {{ review_count|default(food.review_count|default(0)) }} reviews</span></div>
+    <div class="detail-price">PKR {{ '%.0f'|format(food.price|default(0)|float) }}</div>
+    <p class="lede">{{ food.description|default('Made fresh in the campus kitchen.',true) }}</p>
+     <div class="diet-list">{% if food.is_vegetarian %}<span>Vegetarian</span>{% endif %}{% for tag in food.dietary_tags or [] %}<span>{{ tag|replace('-', ' ')|title }}</span>{% endfor %}{% if food.allergen_notes %}<span>Allergens: {{ food.allergen_notes }}</span>{% endif %}</div>
+     {% if food.ingredients %}<p class="field-help"><strong>Ingredients:</strong> {{ food.ingredients }}</p>{% endif %}
+     <p class="field-help"><strong>Spice:</strong> {{ food.spice_level|title }}</p>
+    <div class="review-area">
+      <h2>On the menu</h2>
+      {% if schedules %}{% for schedule in schedules %}<div class="review-row"><header><span>{{ schedule.meal_type }}</span><span class="price">{{ schedule.effective_price|money }}</span></header><p class="field-help">{{ schedule.menu_date.strftime('%A, %d %B') }} · {{ schedule.stock_status }} · {{ schedule.quantity_available }} servings · updated {{ schedule.updated_at|local_datetime }}</p><p class="field-help">{{ schedule.serving_start|campus_time }}–{{ schedule.serving_end|campus_time }}</p></div>{% endfor %}{% else %}<p class="field-help">No upcoming serving is scheduled yet.</p>{% endif %}
+    </div>
+  </div>
+</section>
+<section class="container review-area">
+  <div class="section-head"><div><div class="eyebrow">From the lunch table</div><h2>Reviews & ratings</h2></div></div>
+  {% if success %}<div class="success-box" role="status">{{ success }}</div>{% endif %}
+  {% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+  {% for review in reviews|default([]) %}<article class="review-row" data-testid="review-{{ review.id|default(loop.index) }}"><header><span>{{ review.student_name|default(review.name|default('Campus student')) }}</span><span class="rating" aria-label="{{ review.rating }} out of 5">★ {{ review.rating }}/5</span></header><p>{{ review.comment|default(review.body|default('')) }}</p><time>{{ review.created_at.strftime('%d %b %Y') if review.created_at else '' }}</time></article>{% else %}<div class="empty-state"><h3>First review gets bragging rights.</h3><p>Tell your fellow students what you thought.</p></div>{% endfor %}
+  <form class="admin-panel admin-form" method="post" action="{{ url_for('reviews.submit_review', id=food.id) }}" data-testid="form-submit-review">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <h3>Leave a review</h3>
+    <div class="field"><span class="field-label" id="rating-label">Your rating</span><div class="star-input" role="radiogroup" aria-labelledby="rating-label">
+      {% for value in [5,4,3,2,1] %}<input type="radio" id="rating-{{ value }}" name="rating" value="{{ value }}" required {% if form_values and form_values.rating|string == value|string %}checked{% endif %}><label for="rating-{{ value }}" aria-label="{{ value }} {{ 'star' if value == 1 else 'stars' }}">★</label>{% endfor %}
+    </div></div>
+    <div class="form-grid" style="margin-top:16px">
+      <div class="field"><label for="review-name">Name <span class="field-help">(optional)</span></label><input id="review-name" name="student_name" value="{{ form_values.student_name|default('',true) }}" autocomplete="name" maxlength="80"></div>
+      <div class="field full"><label for="review-comment">Your note <span class="field-help">(optional, up to 300 characters)</span></label><textarea id="review-comment" name="comment" maxlength="300">{{ form_values.comment|default('',true) }}</textarea></div>
+      <p class="field-help full">One rating per browser and food item. This helps limit repeat submissions but does not verify a person’s identity.</p>
+      <div class="full"><button class="btn" type="submit" data-testid="button-submit-review">Post review</button></div>
+    </div>
+  </form>
+</section>
+{% endblock %}

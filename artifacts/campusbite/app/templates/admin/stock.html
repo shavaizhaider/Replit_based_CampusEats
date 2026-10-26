@@ -1,0 +1,13 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Live stock — CampusBite staff{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / counter</div><h1>Live stock</h1><p>Update portions as the kitchen moves. Students see saved changes without reloading.</p></div><a class="btn btn-quiet" href="{{ url_for('admin.schedules') }}">Edit schedule</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+<section class="admin-panel"><div class="panel-head"><h2>Current servings</h2><span class="field-help">Changes save per serving</span></div>
+{% if schedules %}
+<div class="table-wrap"><table><thead><tr><th>Dish</th><th>Meal / date</th><th>Remaining portions</th><th>Availability</th><th>Save</th></tr></thead><tbody>
+{% for schedule in schedules %}<tr data-testid="row-stock-{{ schedule.id }}"><td><span class="table-title">{{ schedule.food.name }}</span><span class="table-sub">{{ schedule.effective_price|money }}</span></td><td>{{ schedule.meal_type }}<span class="table-sub">{{ schedule.menu_date.strftime('%d %b') }}</span></td><td><form id="stock-form-{{ schedule.id }}" class="inline-form" method="post" action="{{ url_for('admin.stock_update', id=schedule.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label class="field-help" for="stock-{{ schedule.id }}">Portions</label> <input class="stock-input" id="stock-{{ schedule.id }}" name="stock" type="number" min="0" step="1" value="{{ schedule.quantity_available }}" aria-label="Remaining portions for {{ schedule.food.name }}" data-testid="input-stock-{{ schedule.id }}"></form><span class="table-sub">Updated {{ schedule.updated_at|local_datetime }}</span></td><td><span class="status {% if schedule.stock_status == 'Sold Out' %}off{% elif schedule.stock_status == 'Low Stock' %}low{% endif %}">{{ schedule.stock_status }}</span></td><td><button class="btn btn-small" type="submit" form="stock-form-{{ schedule.id }}" data-testid="button-save-stock-{{ schedule.id }}">Save stock</button></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty-state"><h3>No servings to count just yet.</h3><p>Add a schedule first; it will appear here for live stock updates.</p><a class="btn" href="{{ url_for('admin.schedule_new') }}">Schedule a serving</a></div>{% endif %}
+</section>
+{% endblock %}

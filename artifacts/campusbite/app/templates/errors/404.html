@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Not found — CampusBite{% endblock %}
+{% block content %}
+<section class="container page-intro">
+  <div class="eyebrow">Nothing on this plate</div>
+  <h1>We couldn’t find that page.</h1>
+  <p class="lede">The item may have been removed or its link may have changed.</p>
+  <a class="btn" href="{{ url_for('public.menu') }}">Explore the menu</a>
+</section>
+{% endblock %}

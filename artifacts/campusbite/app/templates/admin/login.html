@@ -1,0 +1,19 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Staff sign in — CampusBite{% endblock %}
+{% block login_content %}
+<section class="login-wrap">
+  <div class="login-card">
+    <div class="eyebrow">Campus kitchen · staff only</div>
+    <h1>Welcome back.</h1>
+    <p class="lede" style="font-size:14px">Sign in to keep the menu fresh and the stock honest.</p>
+    {% if error %}<div class="error-box" role="alert" data-testid="status-login-error">{{ error }}</div>{% endif %}
+    {% if errors %}<div class="error-box" role="alert">{% if errors is mapping %}{% for field, message in errors.items() %}<div><strong>{{ field|title }}:</strong> {{ message }}</div>{% endfor %}{% else %}{% for message in errors %}<div>{{ message }}</div>{% endfor %}{% endif %}</div>{% endif %}
+    <form method="post" action="{{ url_for('admin.login') }}" data-testid="form-admin-login">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field"><label for="username">Staff username</label><input id="username" name="username" value="{{ form_values.username|default('',true) }}" autocomplete="username" required data-testid="input-login-username"></div>
+      <div class="field"><label for="password">Password</label><div class="password-field"><input id="password" name="password" type="password" autocomplete="current-password" required data-testid="input-login-password"><button class="btn btn-small btn-quiet" type="button" data-password-toggle aria-pressed="false">Show</button></div></div>
+      <button class="btn" type="submit" style="width:100%;margin-top:12px" data-testid="button-login">Sign in to the kitchen desk</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

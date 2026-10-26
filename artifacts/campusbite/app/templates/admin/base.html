@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{% block admin_title %}CampusBite staff{% endblock %}{% endblock %}
+{% block body_class %}admin-shell{% endblock %}
+{% block header %}
+<header class="admin-top">
+  <div class="header-inner">
+    <a class="brand" href="{{ url_for('admin.dashboard') }}"><span class="brand-mark">C</span><span>CampusBite<small>staff kitchen</small></span></a>
+    <div class="nav-actions">
+      <a class="btn btn-small btn-quiet" href="{{ url_for('public.menu') }}">View public menu</a>
+      {% if current_admin %}
+      <form method="post" action="{{ url_for('admin.logout') }}" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-small btn-red" type="submit" data-testid="button-admin-logout">Sign out</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</header>
+{% endblock %}
+{% block content %}
+{% if request.endpoint != 'admin.login' %}
+<div class="admin-layout">
+  <aside class="admin-sidebar" aria-label="Staff workspace navigation">
+    <div class="eyebrow">Kitchen desk</div>
+    <nav class="admin-nav">
+      <a href="{{ url_for('admin.dashboard') }}" {% if request.endpoint == 'admin.dashboard' %}aria-current="page"{% endif %}>Overview</a>
+      <a href="{{ url_for('admin.foods') }}" {% if request.endpoint in ['admin.foods','admin.food_new','admin.food_edit'] %}aria-current="page"{% endif %}>Food</a>
+      <a href="{{ url_for('admin.categories') }}" {% if request.endpoint in ['admin.categories','admin.category_new','admin.category_edit'] %}aria-current="page"{% endif %}>Categories</a>
+      <a href="{{ url_for('admin.schedules') }}" {% if request.endpoint in ['admin.schedules','admin.schedule_new','admin.schedule_edit'] %}aria-current="page"{% endif %}>Schedules</a>
+      <a href="{{ url_for('admin.stock') }}" {% if request.endpoint == 'admin.stock' %}aria-current="page"{% endif %}>Stock</a>
+      <a href="{{ url_for('admin.reviews') }}" {% if request.endpoint == 'admin.reviews' %}aria-current="page"{% endif %}>Reviews</a>
+    </nav>
+  </aside>
+  <div class="admin-main">
+    {% if errors %}<div class="error-box" role="alert" data-testid="status-form-errors">{% if errors is mapping %}{% for field, message in errors.items() %}<div><strong>{{ field|replace('_',' ')|title }}:</strong> {{ message }}</div>{% endfor %}{% else %}{% for message in errors %}<div>{{ message }}</div>{% endfor %}{% endif %}</div>{% endif %}
+    {% block admin_content %}{% endblock %}
+  </div>
+</div>
+<div class="admin-footer">CampusBite staff workspace · Keep the good stuff moving.</div>
+{% else %}
+{% block login_content %}{% endblock %}
+{% endif %}
+{% endblock %}
+{% block footer %}{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Offline — CampusBite{% endblock %}
+{% block content %}
+<section class="container offline-page"><div><div class="offline-icon" aria-hidden="true">↻</div><div class="eyebrow">A small pause</div><h1>You’ve lost the signal.</h1><p class="lede" style="margin:0 auto 22px">The campus menu needs a connection to refresh. Try again when you’re back online.</p><button class="btn" type="button" onclick="window.location.reload()" data-testid="button-retry-connection">Try again</button><p class="field-help" style="margin-top:15px">If you’ve visited before, your browser may still have a saved copy.</p></div></section>
+{% endblock %}

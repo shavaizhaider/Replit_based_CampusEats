@@ -1,0 +1,39 @@
+kind = "web"
+previewPath = "/"
+title = "CampusBite"
+description = "A campus café menu and availability platform for students to browse live food schedules, prices, stock, dietary details, and reviews, with a secure café admin dashboard."
+version = "1.0.0"
+id = "artifacts/campusbite"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26046
+
+[services.development]
+run = "pnpm --filter @workspace/campusbite run dev"
+
+[services.production]
+
+[services.production.build]
+args = ["pnpm", "--filter", "@workspace/campusbite", "run", "build"]
+
+[services.production.build.env]
+NODE_ENV = "production"
+
+[services.production.run]
+args = ["python3", "-m", "gunicorn", "--chdir", "artifacts/campusbite", "--bind", "0.0.0.0:26046", "--workers", "2", "run:app"]
+
+[services.production.run.env]
+PORT = "26046"
+FLASK_ENV = "production"
+CAMPUSBITE_INIT_DB = "1"
+CAMPUSBITE_DEMO_DATA = "0"
+
+[services.production.health.startup]
+path = "/healthz"
+
+[services.env]
+PORT = "26046"
+BASE_PATH = "/"

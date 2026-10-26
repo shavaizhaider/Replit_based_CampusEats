@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Something went wrong — CampusBite{% endblock %}
+{% block content %}
+<section class="container page-intro">
+  <div class="eyebrow">Kitchen pause</div>
+  <h1>We hit a small snag.</h1>
+  <p class="lede">Your saved menu data is safe. Please try again in a moment.</p>
+  <a class="btn" href="{{ url_for('public.index') }}">Back to CampusBite</a>
+</section>
+{% endblock %}

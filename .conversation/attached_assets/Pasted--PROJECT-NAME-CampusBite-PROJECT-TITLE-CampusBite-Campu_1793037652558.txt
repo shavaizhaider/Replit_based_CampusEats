@@ -1,0 +1,1315 @@
+
+PROJECT NAME: CampusBite
+
+PROJECT TITLE:
+CampusBite — Campus Café Menu & Food Availability Platform
+
+YOUR ROLE:
+Act as a senior full-stack web developer, Python Flask engineer, database designer, UI/UX designer, security engineer, and QA tester.
+
+Your task is to design, implement, test, and prepare a complete, functional web application named CampusBite. This is a university campus café menu and food availability platform.
+
+Do not merely create a landing page or static prototype. Build a working full-stack application with a connected database, real admin functionality, persistent data, validation, responsive design, and an installable Progressive Web App (PWA).
+
+==================================================
+1. PROJECT OBJECTIVE
+==================================================
+
+CampusBite helps university students check what food is available at their campus café before walking to the café.
+
+Students should be able to:
+- View the current day's menu without creating an account.
+- Browse menus for upcoming days.
+- Select Breakfast, Lunch, or Evening/Dinner.
+- View food names, images, descriptions, prices, categories, and serving hours.
+- Check current stock status and available quantities.
+- See when food availability was last updated.
+- Search and filter food according to category and dietary preferences.
+- Enter a budget in Pakistani Rupees (PKR) and find affordable food.
+- View ingredients, dietary information, and allergen notes.
+- Rate food from one to five stars and optionally write a review.
+- Install CampusBite on their phone's home screen.
+- Access the last cached public menu when offline, with a clear warning that the information may be outdated.
+
+Café administrators should be able to:
+- Log in securely.
+- Manage food items and categories.
+- Create daily and future menu schedules.
+- Configure meal times and prices.
+- Manage stock quantities and availability.
+- View and moderate student reviews.
+- Preview the public-facing menu.
+
+The first version supports ONE café only.
+
+Use PKR throughout the application. Display prices in a readable format such as Rs. 250.
+
+Do not implement online food ordering, online payments, delivery tracking, multiple cafés, or AI recommendations. These features are outside the first-version scope.
+
+==================================================
+2. REQUIRED TECHNOLOGY STACK
+==================================================
+
+Use the following technologies:
+
+Frontend:
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Jinja2 templates
+- Responsive layouts
+- Accessible form controls and navigation
+
+Backend:
+- Python
+- Flask
+- Flask-SQLAlchemy or SQLAlchemy
+- Flask-WTF or an equivalent approach for secure CSRF-protected forms
+- Secure password hashing using Werkzeug or another established password-hashing library
+
+Database:
+- SQLite for the first version
+- Relational tables with appropriate foreign keys
+- Persistent database storage
+
+Progressive Web App:
+- manifest.json
+- Service worker
+- Installable application icons
+- Offline fallback page
+- Public menu caching
+- Offline/stale-data indicator
+
+Testing:
+- pytest
+- Flask test client
+- Tests for database logic, validation, authentication, filters, reviews, and stock management
+
+Project management:
+- requirements.txt
+- .gitignore
+- README.md
+- Environment-variable configuration
+- Database initialization and sample-data seeding scripts
+
+Do not introduce a large JavaScript framework unless absolutely necessary. Prefer a maintainable Flask/Jinja application with vanilla JavaScript.
+
+Use compatible, stable package versions supported by the Python version available in Replit.
+
+==================================================
+3. DESIGN AND VISUAL IDENTITY
+==================================================
+
+Create a polished, modern university food-tech website.
+
+The visual style should feel like a combination of:
+- A modern campus café website
+- A food discovery platform
+- A clean student utility dashboard
+
+Avoid making it look like a generic admin template or an unfinished student assignment.
+
+Suggested visual direction:
+
+Primary background:
+Warm off-white or very light cream.
+
+Primary text:
+Dark charcoal or deep navy.
+
+Primary accent:
+Fresh green.
+
+Secondary accent:
+Warm orange or amber.
+
+Cards:
+White surfaces with subtle borders, soft shadows, and rounded corners.
+
+Buttons:
+Clearly distinguish primary, secondary, danger, and disabled states.
+
+Typography:
+Use a readable modern sans-serif font. Use a consistent type scale and comfortable line spacing.
+
+Layout:
+- Consistent spacing system.
+- Well-aligned containers.
+- Clear visual hierarchy.
+- High-quality food imagery.
+- Smooth but restrained hover and focus transitions.
+- Subtle card animations.
+- Clear section headings.
+- Useful empty states, error states, and loading indicators.
+
+Build a consistent design system using CSS custom properties for colors, spacing, border radii, shadows, and typography.
+
+Create a recognizable CampusBite logo. A simple original logo combining a food-related symbol with the CampusBite wordmark is sufficient.
+
+Do not rely on emoji as the primary visual identity or substitute emoji for professional food images.
+
+Use suitable food images for sample menu items. Images must have sensible alt text and responsive sizing.
+
+If remote images fail, the layout must remain attractive. Provide local fallback assets or graceful image placeholders.
+
+Avoid unnecessary animations, excessive gradients, oversized headings, and distracting effects.
+
+==================================================
+4. REQUIRED PAGES AND NAVIGATION
+==================================================
+
+Create the following pages.
+
+A. PUBLIC HOMEPAGE
+
+Route:
+/
+
+Purpose:
+Introduce CampusBite and provide quick access to the current café menu.
+
+Include:
+- CampusBite logo.
+- Responsive navigation.
+- Home link.
+- Today's Menu link.
+- Weekly Menu link.
+- Food Categories link or section.
+- About section.
+- Admin Login link.
+- A prominent hero heading, such as:
+  "Your Campus Café, Before You Get There."
+- Supporting text explaining menu, prices, and availability.
+- A primary button: "Explore Today's Menu".
+- A secondary button: "View Weekly Menu".
+- Today's featured or available foods.
+- A quick view of meal periods.
+- A short explanation of how CampusBite works.
+- A call to action encouraging students to install the app.
+- Footer with project information and navigation.
+
+Use real database data for the featured food section. Do not hardcode menu cards into the template.
+
+B. TODAY'S MENU
+
+Route:
+/menu
+
+Features:
+- Display today's date.
+- Date selector.
+- Meal tabs:
+  Breakfast
+  Lunch
+  Evening/Dinner
+- Search input.
+- Category filter.
+- Availability filter.
+- Budget input.
+- Dietary filters.
+- Price sorting.
+- Food cards.
+- Clear-filters control.
+- No-results message.
+- Loading and error states where applicable.
+
+Each food card should include:
+- Food image.
+- Food name.
+- Short description.
+- Category.
+- Price in PKR.
+- Meal period.
+- Serving time.
+- Availability badge.
+- Last-updated time.
+- Average rating.
+- Review count.
+- Button or link to view food details.
+
+C. WEEKLY MENU
+
+Route:
+/weekly-menu
+
+Display menus for the selected week.
+
+Requirements:
+- Seven dates, including the selected date.
+- Clear weekday and calendar-date labels.
+- Breakfast, Lunch, and Evening/Dinner sections.
+- Foods grouped by date and meal.
+- Food prices and availability.
+- Ability to open a particular day's menu.
+- Previous-week and next-week navigation.
+- A button to return to the current week.
+
+The interface must work on small screens. On mobile, use compact day selectors and vertically stacked meal sections instead of forcing a wide table.
+
+Use actual scheduled database records. Missing schedules must show a clear empty state.
+
+D. FOOD DETAILS
+
+Route:
+/food/<food_id>
+
+Display:
+- Food image.
+- Food name.
+- Full description.
+- Price in PKR.
+- Category.
+- Ingredients, if provided.
+- Allergen notes, if provided.
+- Vegetarian/non-vegetarian status.
+- Spice level.
+- Dietary tags.
+- Average rating.
+- Number of visible reviews.
+- Recent reviews.
+- Scheduled meal and serving time where applicable.
+
+Allow students to submit an optional one-to-five-star rating and an optional short review.
+
+Viewing food information must never require a student account or a review submission.
+
+If an item is inactive or does not exist, handle it safely with an appropriate not-found response or page.
+
+E. ADMIN LOGIN
+
+Route:
+/admin/login
+
+Create a professional, minimal login screen.
+
+Include:
+- Username field.
+- Password field.
+- Show/hide password control.
+- Submit button.
+- Validation errors.
+- Clear authentication error messages.
+- CSRF protection.
+- A link back to the public homepage.
+
+Never expose passwords or password hashes in responses.
+
+Do not provide an insecure default administrator password in production. Use a documented, explicit bootstrap process for creating the initial administrator.
+
+F. ADMIN DASHBOARD
+
+Route:
+/admin/dashboard
+
+Protect this route and every other admin route with authentication.
+
+Display useful dashboard metrics:
+- Total active food items.
+- Categories.
+- Today's scheduled items.
+- Available items.
+- Low-stock items.
+- Sold-out items.
+- Pending or visible reviews.
+
+Include quick actions:
+- Add food item.
+- Manage food items.
+- Manage categories.
+- Create menu schedule.
+- Update stock.
+- Manage reviews.
+- Preview public menu.
+
+Metrics must be calculated from the database, not hardcoded.
+
+G. FOOD MANAGEMENT
+
+Routes may include:
+/admin/foods
+/admin/foods/new
+/admin/foods/<food_id>/edit
+
+Allow the administrator to:
+- Add food items.
+- Edit existing items.
+- Deactivate items.
+- Reactivate items.
+- Delete items when safe.
+- Search food items.
+- Filter by category and active status.
+- Upload or select food images.
+- Update descriptions, prices, ingredients, and dietary information.
+
+Fields:
+- Name.
+- Description.
+- Category.
+- Price.
+- Image path.
+- Ingredients.
+- Allergen notes.
+- Vegetarian status.
+- Spice level.
+- Dietary tags.
+- Active/inactive status.
+
+Validation:
+- Name is required.
+- Price must be numeric and greater than zero.
+- Spice level must belong to the supported values.
+- Category must exist.
+- Image uploads must be validated by type and size if uploads are supported.
+- Sanitize filenames and prevent path traversal.
+- Prevent unsafe deletion of records that are still referenced by schedules or reviews.
+
+Use deactivation rather than destructive deletion when preserving historical records is necessary.
+
+H. CATEGORY MANAGEMENT
+
+Routes may include:
+/admin/categories
+/admin/categories/new
+/admin/categories/<category_id>/edit
+
+Initial category suggestions:
+- Desi Food
+- Fast Food
+- Bakery
+- Snacks
+- Beverages
+- Desserts
+- Healthy Food
+
+Allow administrators to add, edit, activate, and deactivate categories.
+
+Prevent duplicate category names where appropriate.
+
+A category that is referenced by existing food items should not cause broken records if deactivated.
+
+I. MENU SCHEDULE MANAGEMENT
+
+Routes may include:
+/admin/schedules
+/admin/schedules/new
+/admin/schedules/<schedule_id>/edit
+
+Administrators must be able to schedule a food item for:
+- A particular date.
+- Breakfast, Lunch, or Evening/Dinner.
+- A configurable serving start time.
+- A configurable serving end time.
+- A price for that scheduled occurrence, if schedule-specific pricing is supported.
+- An initial available quantity.
+
+Provide a date picker and clear time inputs.
+
+Validate:
+- End time must be later than start time.
+- Date must be valid.
+- Food item must exist and be active for new schedules.
+- Quantity cannot be negative.
+- Prices must be valid.
+- Prevent accidental duplicate schedules for the same food, date, and meal unless explicitly supported.
+
+Show a table or card-based schedule list with edit controls.
+
+Administrators must be able to schedule food for future days and inspect existing schedules.
+
+J. STOCK MANAGEMENT
+
+Routes may include:
+/admin/stock
+/admin/stock/<schedule_id>
+
+Administrators must be able to:
+- See scheduled foods and current quantities.
+- Increase or decrease quantities.
+- Mark food as available, low stock, or sold out when appropriate.
+- Record replenishment by updating the available quantity.
+- See when stock was last updated.
+
+Never allow negative quantities.
+
+Use clear stock badges:
+- Available
+- Low Stock
+- Sold Out
+
+Define a configurable low-stock threshold. Use a sensible default, such as five units, if the café has not specified another threshold.
+
+Rules:
+- Quantity equal to zero means Sold Out.
+- Quantity above zero but at or below the threshold means Low Stock.
+- Quantity above the threshold means Available.
+- Do not let an administrator set Available when quantity is zero.
+- Do not let an administrator set Sold Out while quantity is positive without reconciling the quantity.
+- Every stock update must update its timestamp.
+
+Keep one authoritative source of truth for stock. Do not duplicate quantity values across unrelated tables.
+
+K. REVIEW MODERATION
+
+Route:
+/admin/reviews
+
+Administrators should be able to:
+- View submitted ratings and reviews.
+- Search reviews.
+- Filter by food item.
+- Hide inappropriate or spam reviews.
+- Restore hidden reviews if appropriate.
+- Delete reviews.
+- See submission timestamps.
+
+Hidden reviews must not appear publicly and must not contribute to average ratings or review counts.
+
+Require confirmation before destructive deletion.
+
+==================================================
+5. DATABASE DESIGN
+==================================================
+
+Create a relational SQLite database with the following logical entities.
+
+A. ADMINS
+
+Suggested fields:
+- id
+- username
+- password_hash
+- created_at
+- is_active
+
+Requirements:
+- Unique username.
+- Store only password hashes.
+- Use secure password verification.
+- Allow inactive accounts to be denied access.
+- Never expose password_hash through public APIs.
+
+B. CATEGORIES
+
+Suggested fields:
+- id
+- name
+- description
+- is_active
+- created_at
+
+C. FOOD_ITEMS
+
+Suggested fields:
+- id
+- name
+- description
+- category_id
+- default_price
+- image_path
+- ingredients
+- allergen_notes
+- is_vegetarian
+- spice_level
+- dietary_tags
+- is_active
+- created_at
+- updated_at
+
+Use a proper relationship between categories and food items.
+
+Store dietary tags in a structured, validated format rather than relying on arbitrary unvalidated strings.
+
+D. MENU_SCHEDULES
+
+Suggested fields:
+- id
+- food_item_id
+- menu_date
+- meal_type
+- serving_start
+- serving_end
+- scheduled_price, if schedule-specific pricing is enabled
+- quantity_available
+- stock_status
+- created_at
+- updated_at
+
+Every scheduled occurrence must have its own stock quantity.
+
+If the same dish is served on different days, changing the quantity for one occurrence must not accidentally change the quantity for every other occurrence.
+
+Use consistent date and time formats. Treat café serving times as local campus times.
+
+E. REVIEWS
+
+Suggested fields:
+- id
+- food_item_id
+- rating
+- review_text
+- reviewer_name, optional
+- device_token or secure device identifier
+- is_hidden
+- created_at
+- updated_at, if needed
+
+Review rules:
+- Rating must be an integer from one to five.
+- Review text is optional.
+- A rating can be submitted without text.
+- A text review must not be empty or whitespace-only when provided.
+- Maximum review length: 300 characters.
+- Store a rating against the food item, not an individual menu occurrence.
+- Exclude hidden reviews from public averages and counts.
+- Restrict repeated ratings for the same item from the same recognized device token.
+- Do not claim that a cookie or device token proves a real person's identity.
+
+Use database migrations or a controlled schema initialization process.
+
+Define foreign keys, indexes, uniqueness constraints, and appropriate deletion behavior.
+
+Use Decimal or an equivalent fixed-precision representation for money calculations. If using SQLite numeric fields, ensure application-level price handling is consistent and avoids floating-point rounding errors.
+
+Use database transactions for multi-step changes.
+
+==================================================
+6. MENU AND MEAL LOGIC
+==================================================
+
+The application supports three meal periods:
+- Breakfast
+- Lunch
+- Evening/Dinner
+
+Illustrative times only:
+- Breakfast: 7:30 AM to 10:30 AM.
+- Lunch: 12:00 PM to 3:00 PM.
+- Evening/Dinner: 4:00 PM to 8:00 PM.
+
+These are placeholders. The administrator must be able to configure the actual serving windows.
+
+Do not permanently hardcode the example times as the café's confirmed operating hours.
+
+For every selected date and meal:
+- Retrieve only schedules matching the requested date and meal.
+- Show the corresponding foods.
+- Show the correct serving times.
+- Display accurate stock status.
+- Display the last-updated timestamp.
+- Handle missing schedules gracefully.
+
+An item may be labelled currently available only if:
+- The food item is active.
+- Its schedule matches the selected date and meal.
+- Its quantity is greater than zero.
+- The current time falls within the configured serving window, unless advance availability is intentionally enabled.
+
+Future menu items may still be displayed as scheduled, but must not be falsely labelled as currently available before their serving window.
+
+Expired serving windows must not appear as currently available.
+
+Keep date and time logic consistent with the café's local timezone. Avoid comparing incompatible naive and timezone-aware timestamps.
+
+==================================================
+7. LIVE AVAILABILITY AND AUTO-REFRESH
+==================================================
+
+Implement near-real-time availability using lightweight JavaScript polling.
+
+Requirements:
+- Poll public menu data every 15–30 seconds.
+- Prefer 20 seconds as the initial interval.
+- Use a Flask JSON endpoint or another simple, reliable server endpoint.
+- Return only necessary public fields.
+- Update relevant stock badges, quantities, and last-updated timestamps.
+- Avoid a complete page reload when possible.
+- Prevent overlapping requests.
+- Handle network failures gracefully.
+- Pause or reduce polling when the browser tab is hidden.
+- Resume normal polling when the tab becomes visible.
+- Do not show fake real-time updates.
+
+When an administrator updates stock:
+1. Validate the submitted change.
+2. Save the change in the database.
+3. Update the stock timestamp.
+4. Return a clear success or error response.
+5. Allow student pages to display the new saved values on the next refresh.
+
+Live availability means reflecting saved administrator updates. It does not mean automatically detecting food sales or physically counting inventory.
+
+==================================================
+8. SMART BUDGET FINDER
+==================================================
+
+Create a functional budget finder.
+
+The student enters an amount in PKR.
+
+Example:
+A student enters Rs. 300 and selects Lunch.
+
+Display foods that:
+- Belong to the selected date.
+- Belong to the selected meal.
+- Meet the application's current-availability rules.
+- Have a price less than or equal to Rs. 300.
+- Satisfy any other active filters.
+
+Validation:
+- Reject empty, invalid, zero, or negative budgets.
+- Handle decimal input consistently if decimal prices are allowed.
+- Never trust client-side filtering alone for data or security.
+
+Provide sorting options:
+- Lowest price first.
+- Highest price first.
+
+The budget filter must work together with search, category, dietary, and availability filters.
+
+If no food matches, show:
+"No matching food found within your budget."
+
+Provide a reset-filters button.
+
+Optional future enhancement:
+Suggest combinations of food items whose combined price does not exceed the entered budget.
+
+Do not prioritize this optional enhancement over completing the core budget filter.
+
+==================================================
+9. SEARCH, CATEGORY, AND DIETARY FILTERS
+==================================================
+
+Provide the following filters:
+- Search by food name.
+- Category.
+- Available-only.
+- Vegetarian.
+- Non-vegetarian.
+- Spice level.
+- Dietary tags.
+- Budget.
+- Meal period.
+- Date.
+
+Possible dietary tags:
+- Dairy-free.
+- Egg-free.
+- Gluten-free, when confirmed by the café.
+- Vegan, when confirmed by the café.
+- Other administrator-defined tags.
+
+Do not invent ingredient or allergen claims.
+
+The café must provide or confirm ingredients, allergen information, and dietary tags.
+
+All active filters must combine using AND logic.
+
+Example:
+A student selects:
+- Lunch.
+- Vegetarian.
+- Desi Food.
+- Budget up to Rs. 300.
+- Available only.
+
+The application must show only foods satisfying every selected condition.
+
+Implement filters consistently on the backend. Client-side enhancements may improve responsiveness but must not replace backend validation.
+
+When no results match, show a helpful message and an easy way to clear filters.
+
+==================================================
+10. RATINGS AND REVIEWS
+==================================================
+
+Students must be able to browse all public menu information without registration.
+
+Allow an optional rating from one to five stars and an optional short written review.
+
+Requirements:
+- Interactive star-rating control.
+- Keyboard-accessible rating controls.
+- Visible selected-star state.
+- Clear validation messages.
+- Maximum review length of 300 characters.
+- Server-side rating validation.
+- Reject invalid ratings such as 0, 6, negative numbers, decimals, or text.
+- Reject whitespace-only review text when text is submitted.
+- Allow rating without a review.
+- Show average rating and review count on food cards.
+- Show recent public reviews on food detail pages.
+- Exclude hidden reviews from averages and public lists.
+- Escape user-generated text to prevent HTML and script injection.
+- Add basic abuse protection and rate limiting.
+- Use a secure, random device token or equivalent mechanism to restrict repeated ratings for the same food item.
+- Do not store unnecessary personal information.
+- Clearly explain that anonymous device-based restrictions are not perfect identity verification.
+
+If cookies are used, configure them appropriately and do not use the device token as an authentication credential.
+
+Provide administrator moderation controls.
+
+Calculate averages from visible reviews using reliable server-side database queries.
+
+==================================================
+11. PROGRESSIVE WEB APP (PWA)
+==================================================
+
+Make CampusBite installable on supported mobile and desktop browsers.
+
+Create:
+- manifest.json
+- Service worker JavaScript file
+- App icons in 192x192 and 512x512 sizes
+- Theme-color metadata
+- Application name and short name
+- Appropriate start URL
+- Standalone display mode
+- Offline fallback page
+
+The application should:
+- Be installable on supported browsers.
+- Open in an app-like standalone window where supported.
+- Provide an install prompt or installation guidance where supported.
+- Continue to show the app shell when offline.
+- Display the last successfully cached public menu where possible.
+- Clearly show an offline warning.
+- Show the last-updated timestamp for cached menu data.
+
+Required offline notice:
+"Offline — menu and stock information may be outdated."
+
+Caching strategy:
+- Cache public CSS, JavaScript, icons, and the offline fallback page.
+- Use network-first behavior for menu and availability data.
+- Fall back to a previously cached public response when the network is unavailable.
+- Clearly label cached data as potentially stale.
+- Do not represent stale stock as confirmed live availability.
+- Never cache admin pages, login responses, sensitive information, or admin API responses.
+- Avoid caching authenticated or user-specific content.
+- Provide appropriate cache versioning and cleanup.
+- Ensure that changes to the application can invalidate obsolete cached assets.
+
+Register the service worker correctly.
+
+Use HTTPS in deployed environments. Localhost may be used for development.
+
+Test the installation experience on supported Android Chrome and iOS Safari versions, recognizing that installation steps and support differ by platform.
+
+Do not claim successful PWA installation unless it has actually been verified.
+
+==================================================
+12. ADMIN AUTHENTICATION AND SECURITY
+==================================================
+
+Security is a mandatory part of the implementation.
+
+Implement:
+- Secure password hashing.
+- Protected admin routes.
+- Session-based authentication.
+- Appropriate session expiration.
+- Logout functionality.
+- Secure session-cookie settings in production.
+- CSRF protection for state-changing forms.
+- Server-side validation.
+- Parameterized database queries or ORM-based queries.
+- Safe handling of user-generated content.
+- Basic login rate limiting.
+- Review-submission rate limiting.
+- Appropriate HTTP error handling.
+- Safe file-upload validation where applicable.
+- Production secret configuration through environment variables.
+- No committed passwords, API keys, or session secrets.
+
+Protect every admin page and every administrative API endpoint, not just the dashboard.
+
+A student must never be able to modify food items, stock, schedules, categories, or reviews through a public endpoint.
+
+Do not rely only on hiding admin buttons in the frontend.
+
+Unauthenticated requests to protected admin routes should be redirected to login or receive an appropriate unauthorized response.
+
+Prevent open redirects after login.
+
+Use secure defaults and avoid leaking stack traces, secrets, or sensitive data to public users.
+
+Do not store plain-text passwords.
+
+Provide a safe way to initialize the first administrator using an explicit environment-based or command-line bootstrap procedure.
+
+Do not seed a publicly usable default admin password in production.
+
+==================================================
+13. RESPONSIVE DESIGN AND ACCESSIBILITY
+==================================================
+
+CampusBite must work on:
+- Small mobile phones.
+- Larger smartphones.
+- Tablets.
+- Laptops.
+- Desktop screens.
+
+Requirements:
+- Mobile-first CSS.
+- Responsive navigation.
+- Properly sized touch targets.
+- Flexible food-card grids.
+- No unintended horizontal scrolling.
+- Readable font sizes.
+- Consistent spacing.
+- Accessible contrast.
+- Visible keyboard focus.
+- Semantic HTML.
+- Labels for every input.
+- Accessible modal dialogs if used.
+- Keyboard-friendly star-rating controls.
+- Alt text for meaningful images.
+- Useful form-validation messages.
+- ARIA attributes where necessary.
+- Respect for reduced-motion preferences.
+- Loading, empty, success, and error states.
+
+Use responsive image sizing and reasonable image compression.
+
+Avoid unnecessarily large frontend libraries and heavy assets.
+
+==================================================
+14. REQUIRED PROJECT STRUCTURE
+==================================================
+
+Use a clean, maintainable structure similar to:
+
+campusbite/
+    app/
+        __init__.py
+        config.py
+        extensions.py
+        models.py
+        public/
+            routes.py
+        admin/
+            routes.py
+        reviews/
+            routes.py
+        services/
+            menu_service.py
+            stock_service.py
+            review_service.py
+        templates/
+            base.html
+            index.html
+            menu.html
+            weekly_menu.html
+            food_detail.html
+            offline.html
+            errors/
+                403.html
+                404.html
+                500.html
+            admin/
+                login.html
+                dashboard.html
+                foods.html
+                food_form.html
+                categories.html
+                category_form.html
+                schedules.html
+                schedule_form.html
+                stock.html
+                reviews.html
+        static/
+            css/
+                style.css
+                admin.css
+            js/
+                main.js
+                menu.js
+                reviews.js
+                admin.js
+                service-worker.js
+            images/
+                logo.svg
+                icon-192.png
+                icon-512.png
+    instance/
+    tests/
+        test_public.py
+        test_auth.py
+        test_foods.py
+        test_schedules.py
+        test_stock.py
+        test_filters.py
+        test_reviews.py
+    scripts/
+        init_db.py
+        seed_data.py
+        create_admin.py
+    requirements.txt
+    .env.example
+    .gitignore
+    README.md
+    run.py
+
+You may adjust the exact structure if a different organization is more appropriate, but keep concerns separated.
+
+Do not place the entire application, every route, all database logic, and every template into one enormous Python file.
+
+Use Flask application factories or another clear application initialization pattern.
+
+Use Blueprints to separate public pages, administration, and reviews.
+
+==================================================
+15. SAMPLE DATA
+==================================================
+
+Seed the development database with realistic sample food records so the application looks complete on first launch.
+
+Suggested foods:
+- Chicken Biryani.
+- Daal Chawal.
+- Chicken Karahi.
+- Chicken Roll.
+- Zinger Burger.
+- French Fries.
+- Aloo Paratha.
+- Omelette.
+- Chicken Sandwich.
+- Samosa.
+- Pakora.
+- Chai.
+- Fresh Juice.
+- Brownie.
+- Fruit Salad.
+
+Use realistic example prices in PKR.
+
+Include:
+- Multiple food categories.
+- Vegetarian and non-vegetarian examples.
+- Different spice levels.
+- Some optional dietary tags.
+- Example ingredients and allergen notes.
+- Multiple dates of menu schedules.
+- Breakfast, Lunch, and Evening/Dinner records.
+- Available, Low Stock, and Sold Out examples.
+- Different stock quantities.
+- Example ratings and reviews where appropriate.
+
+These records are sample data, not confirmed information from an actual café.
+
+Make sample-data seeding safe to run repeatedly without duplicating the records.
+
+Do not overwrite existing administrator credentials when seeding sample food data.
+
+Clearly document how to reset the development database if needed.
+
+==================================================
+16. USER EXPERIENCE DETAILS
+==================================================
+
+Use clear, student-friendly language.
+
+Example messages:
+
+Empty menu:
+"No food is scheduled for this meal yet."
+
+No filter matches:
+"No matching food found. Try changing your filters."
+
+Budget error:
+"Enter a valid budget greater than Rs. 0."
+
+Sold out:
+"This item is currently sold out."
+
+Low stock:
+"Low stock — availability may change."
+
+Review success:
+"Thank you! Your rating has been submitted."
+
+Login error:
+"Invalid username or password."
+
+Offline:
+"Offline — menu and stock information may be outdated."
+
+Validation errors should explain what the user needs to correct.
+
+Do not display raw Python exceptions or database error messages to users.
+
+Use flash messages or inline status components for form submissions.
+
+Avoid losing a student's filter selections unnecessarily when navigating between menu dates or meals.
+
+Provide a reset-filters control.
+
+Make the most important information visible quickly:
+1. Food name.
+2. Price.
+3. Availability.
+4. Serving time.
+5. Last-updated time.
+
+==================================================
+17. PERFORMANCE AND MAINTAINABILITY
+==================================================
+
+Requirements:
+- Use database indexes for commonly queried dates, meal types, categories, and review relationships where appropriate.
+- Avoid N+1 query patterns on menu pages.
+- Paginate large admin lists if necessary.
+- Validate inputs before writing to the database.
+- Use database transactions for related writes.
+- Keep public JSON responses small.
+- Use cache-control headers appropriately.
+- Avoid unnecessary database queries during polling.
+- Use reusable Jinja templates and macros where useful.
+- Keep CSS and JavaScript organized.
+- Add comments for non-obvious logic, not every line.
+- Keep error handling consistent.
+- Do not leave debug mode enabled in production.
+- Do not silently swallow exceptions.
+
+==================================================
+18. TESTING REQUIREMENTS
+==================================================
+
+Write automated tests and manually verify the complete application.
+
+Public menu tests:
+- Homepage loads.
+- Today's menu loads.
+- Correct meal schedules appear.
+- Weekly menu displays the right dates.
+- Missing schedules show empty states.
+- Inactive food items are handled correctly.
+- Expired items are not falsely marked currently available.
+
+Admin tests:
+- Login succeeds with correct credentials.
+- Login fails with incorrect credentials.
+- Password hashes are used.
+- Unauthenticated users cannot access admin routes.
+- Logout invalidates the authenticated session.
+- Food items can be created and edited.
+- Categories can be managed.
+- Menu schedules can be created and edited.
+- Invalid form data is rejected.
+
+Stock tests:
+- Stock updates persist.
+- Zero quantity results in Sold Out.
+- Low-stock thresholds work.
+- Negative quantities are rejected.
+- Timestamps update after stock changes.
+- Scheduled occurrences maintain independent quantities.
+
+Budget and filter tests:
+- Items above the budget are excluded.
+- Items at or below the budget are included when other conditions match.
+- Zero and negative budgets are rejected.
+- Sorting works.
+- Multiple filters combine correctly.
+- Resetting filters restores the intended results.
+
+Review tests:
+- Ratings 1 through 5 are accepted.
+- Ratings 0 and 6 are rejected.
+- Decimal and nonnumeric ratings are rejected.
+- Ratings can be submitted without text.
+- Empty and whitespace-only text submissions are rejected when text is provided.
+- Overly long reviews are rejected.
+- Hidden reviews are excluded from averages and public views.
+- Repeated device submissions are restricted.
+- Review text is safely escaped.
+- Administrators can hide and delete reviews.
+
+PWA tests:
+- Manifest is served correctly.
+- Service worker is registered.
+- Offline fallback is available after caching.
+- Cached menu data is visibly labelled as potentially outdated.
+- Admin responses are not cached.
+- The application remains usable at supported mobile widths.
+
+Security tests:
+- CSRF protections work.
+- Public routes cannot mutate admin data.
+- Invalid identifiers are handled safely.
+- Unauthorized administrative API requests are rejected.
+- Secrets are not included in the repository.
+- Uploaded files, if supported, are validated.
+
+Use a separate test database so tests cannot destroy development or production data.
+
+Run the automated test suite and fix failures before declaring the project complete.
+
+==================================================
+19. DEPLOYMENT AND DOCUMENTATION
+==================================================
+
+Prepare the project for deployment on a hosting service that supports Python Flask.
+
+Provide:
+- requirements.txt.
+- Clear startup command.
+- Environment configuration example.
+- Database initialization instructions.
+- Sample-data seeding instructions.
+- Initial administrator creation instructions.
+- Development run instructions.
+- Production deployment notes.
+- Persistent database storage guidance.
+- Backup and restore guidance.
+- PWA installation instructions.
+- Troubleshooting guidance.
+
+Use environment variables for:
+- SECRET_KEY.
+- DATABASE_URL or an equivalent database configuration.
+- Any other required production settings.
+
+Never commit a real secret in the example environment file.
+
+Check that the deployment environment supports persistent SQLite storage. If the host has an ephemeral filesystem, document the need for persistent storage or an appropriate production database.
+
+The README must explain:
+- What CampusBite does.
+- Technology stack.
+- Main features.
+- Project structure.
+- Installation.
+- Running the application.
+- Database setup.
+- Creating the administrator.
+- Running tests.
+- Deploying the app.
+- PWA installation.
+- Known limitations.
+- How stock availability works.
+- Sample-data assumptions.
+
+==================================================
+20. DEVELOPMENT WORKFLOW
+==================================================
+
+Build the application incrementally in this order.
+
+PHASE 1:
+Inspect the Replit workspace and existing files. Preserve useful existing work. Identify the runtime and dependencies.
+
+PHASE 2:
+Set up the Flask application, configuration, database, models, and application factory.
+
+PHASE 3:
+Initialize the database and seed sample categories, food items, and menu schedules.
+
+PHASE 4:
+Build the public homepage, today's menu, weekly menu, food cards, and food detail pages.
+
+PHASE 5:
+Implement backend-driven search, meal selection, date navigation, category filters, dietary filters, budget filtering, and sorting.
+
+PHASE 6:
+Build secure administrator authentication and the dashboard.
+
+PHASE 7:
+Implement food management, category management, menu scheduling, and stock management.
+
+PHASE 8:
+Implement ratings, reviews, average calculations, abuse prevention, and moderation.
+
+PHASE 9:
+Implement periodic public availability refresh and error handling.
+
+PHASE 10:
+Implement PWA installation, manifest, service worker, offline page, and stale-data indicators.
+
+PHASE 11:
+Polish responsive layouts, accessibility, form validation, loading states, and error states.
+
+PHASE 12:
+Write and run automated tests. Fix bugs and verify all essential user workflows.
+
+PHASE 13:
+Complete the README, deployment configuration, and final project review.
+
+At every phase:
+- Run the application.
+- Inspect errors.
+- Test the feature that was just implemented.
+- Fix regressions before proceeding.
+
+Do not skip database integration and replace it with hardcoded arrays.
+
+Do not create buttons that look functional but have no working action.
+
+Do not leave core functionality as TODO comments, placeholders, or nonfunctional mock interfaces.
+
+If a feature depends on a platform capability that cannot be fully verified in Replit, implement it correctly where possible and explicitly document the limitation.
+
+==================================================
+21. DEFINITION OF DONE
+==================================================
+
+CampusBite is complete only when:
+
+1. A student can open the homepage without logging in.
+2. A student can select a date and meal.
+3. The correct menu is retrieved from the database.
+4. Food prices appear in PKR.
+5. Availability and stock quantities are accurate.
+6. Last-updated timestamps are displayed.
+7. An administrator can create and schedule food items.
+8. An administrator can change stock safely.
+9. Student pages reflect saved stock changes through polling.
+10. Budget filtering works correctly.
+11. Category and dietary filters combine correctly.
+12. Empty menus and empty filter results have helpful messages.
+13. Students can optionally rate and review food.
+14. Average ratings exclude hidden reviews.
+15. Administrators can moderate reviews.
+16. Admin-only pages and endpoints are protected.
+17. The interface works on mobile, tablet, and desktop.
+18. The PWA manifest and service worker are correctly configured.
+19. Offline cached data is clearly labelled as potentially outdated.
+20. Admin pages and sensitive responses are not cached.
+21. Automated tests pass.
+22. The README explains setup and deployment.
+23. No real credentials or secrets are committed.
+24. The application starts successfully using the documented instructions.
+
+==================================================
+22. FINAL INSTRUCTIONS TO REPLIT AGENT
+==================================================
+
+Begin by inspecting the existing project workspace.
+
+If the project already contains code, review and reuse appropriate files instead of overwriting everything blindly.
+
+If no project exists, initialize it using the architecture described above.
+
+Then implement the application end to end.
+
+Prioritize correctness, security, maintainability, accessibility, and a polished user interface.
+
+Make sensible implementation decisions without repeatedly asking me about routine technical details.
+
+Do not claim that a feature works unless you have implemented and tested it to the extent possible in the environment.
+
+When complete, provide:
+- A concise summary of implemented features.
+- The final project structure.
+- Commands to install dependencies and run the application.
+- Instructions to initialize the database and create an administrator.
+- Instructions for running tests.
+- The available Replit preview or run URL.
+- Any remaining limitations or deployment requirements.
+
+Start with the application foundation, then implement each phase in sequence. The final result must be a working CampusBite web application, not merely a visual mockup.

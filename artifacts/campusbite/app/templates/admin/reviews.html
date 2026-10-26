@@ -1,0 +1,20 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Student reviews — CampusBite staff{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / student table</div><h1>Student reviews</h1><p>Keep feedback helpful, respectful, and visible to the campus.</p></div></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+<section class="admin-panel">
+<form class="filter-panel admin-filter" method="get" action="{{ url_for('admin.reviews') }}">
+  <div class="filter-grid"><div class="field"><label for="review-search">Search reviews</label><input id="review-search" type="search" name="q" value="{{ query|default('') }}" placeholder="Dish, student, or words"></div>
+  <div class="field"><label for="review-food">Food item</label><select id="review-food" name="food_id"><option value="">All food</option>{% for food in foods|default([]) %}<option value="{{ food.id }}" {% if food_id|string == food.id|string %}selected{% endif %}>{{ food.name }}</option>{% endfor %}</select></div>
+  <button class="btn" type="submit">Apply filters</button><a class="btn btn-quiet" href="{{ url_for('admin.reviews') }}">Clear</a></div>
+</form>
+{% if reviews %}
+<div class="table-wrap"><table><thead><tr><th>Dish / student</th><th>Rating</th><th>Review</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+{% for review in reviews %}<tr data-testid="row-review-{{ review.id }}"><td><span class="table-title">{{ review.food.name|default('Menu item') }}</span><span class="table-sub">{{ review.student_name|default(review.name|default('Campus student')) }}</span></td><td><span class="rating">★ {{ review.rating }}/5</span></td><td>{{ review.comment|default(review.body|default(''))|truncate(150) }}<span class="table-sub">{{ review.created_at.strftime('%d %b %Y') if review.created_at else '' }}</span></td><td><span class="status {% if not review.is_approved|default(review.is_visible|default(true)) %}off{% endif %}">{{ 'Published' if review.is_approved|default(review.is_visible|default(true)) else 'Pending' }}</span></td><td><div class="table-actions">
+<form class="inline-form" method="post" action="{{ url_for('admin.review_moderate', id=review.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="is_approved" value="{{ '0' if review.is_approved|default(review.is_visible|default(true)) else '1' }}"><button class="btn btn-small btn-quiet" type="submit" data-testid="button-moderate-review-{{ review.id }}">{{ 'Unpublish' if review.is_approved|default(review.is_visible|default(true)) else 'Publish' }}</button></form>
+<form class="inline-form" method="post" action="{{ url_for('admin.review_delete', id=review.id) }}" onsubmit="return confirm('Delete this review?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-small btn-danger" type="submit" data-testid="button-delete-review-{{ review.id }}">Delete</button></form>
+</div></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty-state"><h3>Nothing to moderate.</h3><p>New student feedback will land here when it’s submitted.</p></div>{% endif %}</section>
+{% endblock %}

@@ -1,0 +1,17 @@
+<article class="food-card" data-testid="card-food-{{ schedule.food.id|default(schedule.id) }}">
+  <a href="{{ url_for('public.food_detail', id=schedule.food.id) }}" aria-label="View {{ schedule.food.name }}">
+    <div class="food-photo">
+      <img data-fallback src="{{ schedule.food.image_url|default(schedule.food.photo_url|default('', true), true) }}" alt="{{ schedule.food.name }}" loading="lazy">
+      <div class="photo-fallback" hidden aria-hidden="true">Fresh from the campus kitchen</div>
+      <span class="availability {% if schedule.quantity_available <= 0 %}out{% elif schedule.stock_status == 'Low Stock' %}low{% endif %}" data-availability-for="{{ schedule.food.id }}" data-schedule-id="{{ schedule.id }}">
+        {{ schedule.availability_label }}
+      </span>
+    </div>
+    <div class="food-info">
+      <div class="food-meta"><span class="category-tag">{{ schedule.food.category.name|default('Kitchen favourite') }}</span><span class="rating">★ {{ schedule.food.avg_rating|default('—') }} <span>({{ schedule.food.review_count|default(0) }})</span></span></div>
+      <h3>{{ schedule.food.name }}</h3>
+      <p>{{ schedule.food.description|default('A campus favourite, made fresh for today.', true)|truncate(100) }}</p>
+      <div class="food-bottom"><span><span class="price">{{ schedule.effective_price|money }}</span><span class="table-sub"><span data-stock-for="{{ schedule.food.id }}">{{ schedule.quantity_available }}</span> portions · updated {{ schedule.updated_at|local_datetime }}</span></span><span class="text-link">Details →</span></div>
+    </div>
+  </a>
+</article>

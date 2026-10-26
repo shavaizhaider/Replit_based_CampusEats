@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Kitchen overview — CampusBite{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / overview</div><h1>Good morning, kitchen.</h1><p>A clear view of what’s serving and what needs a little attention.</p></div><a class="btn" href="{{ url_for('admin.schedule_new') }}" data-testid="button-add-schedule">Add a serving</a></header>
+<div class="metric-grid">
+  <div class="metric"><div class="metric-label">Menu items</div><div class="metric-value" data-testid="metric-food-count">{{ metrics.food_count|default(0) }}</div></div>
+  <div class="metric"><div class="metric-label">Serving today</div><div class="metric-value" data-testid="metric-today-count">{{ metrics.today_count|default(0) }}</div></div>
+  <div class="metric"><div class="metric-label">Low stock</div><div class="metric-value" data-testid="metric-low-stock">{{ metrics.low_stock_count|default((low_stock|default([]))|length) }}</div></div>
+  <div class="metric"><div class="metric-label">Reviews to check</div><div class="metric-value" data-testid="metric-pending-reviews">{{ metrics.pending_reviews|default(0) }}</div></div>
+</div>
+<section class="admin-panel">
+  <div class="panel-head"><h2>Stock running low</h2><a class="text-link" href="{{ url_for('admin.stock') }}">Manage stock →</a></div>
+  {% if low_stock %}
+  <div class="table-wrap"><table><thead><tr><th>Dish</th><th>Meal / date</th><th>Left</th><th>Next step</th></tr></thead><tbody>
+  {% for schedule in low_stock %}<tr data-testid="row-low-stock-{{ schedule.id }}"><td><span class="table-title">{{ schedule.food.name }}</span></td><td>{{ schedule.meal|default(schedule.meal_type|default('—')) }}<span class="table-sub">{{ schedule.date.strftime('%d %b') if schedule.date else '' }}</span></td><td><span class="status low">{{ schedule.stock|default(0) }} portions</span></td><td><a class="text-link" href="{{ url_for('admin.stock') }}">Update stock</a></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state" style="margin:16px"><h3>All counters are looking good.</h3><p>No low-stock servings need attention right now.</p></div>{% endif %}
+</section>
+<section class="admin-panel">
+  <div class="panel-head"><h2>Quick prep</h2></div>
+  <div style="padding:18px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-quiet" href="{{ url_for('admin.food_new') }}">Add food item</a><a class="btn btn-quiet" href="{{ url_for('admin.schedule_new') }}">Schedule a serving</a><a class="btn btn-quiet" href="{{ url_for('admin.reviews') }}">Review student feedback</a></div>
+</section>
+{% endblock %}

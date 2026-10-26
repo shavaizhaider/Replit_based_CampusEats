@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Serving schedule — CampusBite staff{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / service</div><h1>Serving schedule</h1><p>Set what’s on, when it’s served, and how many portions are ready.</p></div><a class="btn" href="{{ url_for('admin.schedule_new') }}" data-testid="button-new-schedule">Schedule a dish +</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+<section class="admin-panel">{% if schedules %}
+<div class="table-wrap"><table><thead><tr><th>Dish</th><th>Meal</th><th>Date</th><th>Time</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead><tbody>
+{% for schedule in schedules %}<tr data-testid="row-schedule-{{ schedule.id }}"><td><span class="table-title">{{ schedule.food.name }}</span></td><td>{{ schedule.meal_type }}</td><td>{{ schedule.menu_date.strftime('%d %b %Y') }}</td><td>{{ schedule.serving_start|campus_time }}–{{ schedule.serving_end|campus_time }}</td><td>{{ schedule.effective_price|money }}</td><td><span class="status {% if schedule.stock_status == 'Sold Out' %}off{% elif schedule.stock_status == 'Low Stock' %}low{% endif %}">{{ schedule.stock_status }} · {{ schedule.quantity_available }}</span></td><td><div class="table-actions"><a class="btn btn-small btn-quiet" href="{{ url_for('admin.schedule_edit', id=schedule.id) }}">Edit</a><form class="inline-form" method="post" action="{{ url_for('admin.schedule_delete', id=schedule.id) }}" onsubmit="return confirm('Remove this serving from the schedule?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-small btn-danger" type="submit">Remove</button></form></div></td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty-state"><h3>Set the first serving.</h3><p>Schedule a dish so students know what’s available and when.</p><a class="btn" href="{{ url_for('admin.schedule_new') }}">Add a serving</a></div>{% endif %}</section>
+{% endblock %}

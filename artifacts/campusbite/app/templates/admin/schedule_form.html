@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}{{ 'Edit serving' if schedule else 'Schedule a serving' }} — CampusBite{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / service schedule</div><h1>{{ 'Update this serving.' if schedule else 'Put it on the menu.' }}</h1><p>Times and portions help everyone plan a better break.</p></div><a class="btn btn-quiet" href="{{ url_for('admin.schedules') }}">← Schedule</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}{% set v = form_values|default({},true) %}
+<section class="admin-panel"><form class="admin-form" method="post" action="{{ url_for('admin.schedule_edit', id=schedule.id) if schedule else url_for('admin.schedule_new') }}" data-testid="form-schedule"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="form-grid">
+  <div class="field full"><label for="schedule-food">Dish</label><select id="schedule-food" name="food_id" required data-testid="select-schedule-food"><option value="">Choose a dish</option>{% for food in foods|default([]) %}<option value="{{ food.id }}" {% if v.food_id|default(schedule.food_id|default(schedule.food.id|default('') if schedule else ''),true)|string == food.id|string %}selected{% endif %}>{{ food.name }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="schedule-date">Date</label><input id="schedule-date" type="date" name="date" required value="{{ v.date|default(schedule.date.isoformat() if schedule and schedule.date else '',true) }}" data-testid="input-schedule-date"></div>
+  <div class="field"><label for="schedule-meal">Meal time</label><select id="schedule-meal" name="meal" required data-testid="select-schedule-meal">{% for meal in meals|default(['Breakfast','Lunch','Evening/Dinner']) %}<option value="{{ meal }}" {% if v.meal|default(schedule.meal|default(schedule.meal_type|default(''),true),true) == meal %}selected{% endif %}>{{ meal }}</option>{% endfor %}</select></div>
+  <div class="field"><label for="schedule-start">Starts</label><input id="schedule-start" type="time" name="start_time" value="{{ v.start_time|default(schedule.start_time|default('',true),true) }}"></div>
+  <div class="field"><label for="schedule-end">Ends</label><input id="schedule-end" type="time" name="end_time" value="{{ v.end_time|default(schedule.end_time|default('',true),true) }}"></div>
+  <div class="field"><label for="schedule-price">Serving price (PKR, optional)</label><input id="schedule-price" type="number" min="0.01" step="0.01" name="price" value="{{ v.price|default(schedule.scheduled_price|default('',true) if schedule else '',true) }}"><span class="field-help">Leave blank to use the food item’s standard price.</span></div>
+  <div class="field"><label for="schedule-stock">Portions ready</label><input id="schedule-stock" type="number" min="0" step="1" name="stock" value="{{ v.stock|default(schedule.stock|default(0),true) }}" required></div>
+  <div class="full" style="display:flex;gap:10px"><button class="btn" type="submit" data-testid="button-save-schedule">Save serving</button><a class="btn btn-quiet" href="{{ url_for('admin.schedules') }}">Cancel</a></div>
+</div></form></section>
+{% endblock %}

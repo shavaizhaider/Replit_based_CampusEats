@@ -1,0 +1,31 @@
+{% extends "admin/base.html" %}
+{% block admin_title %}Food items — CampusBite staff{% endblock %}
+{% block admin_content %}
+<header class="admin-heading"><div><div class="eyebrow">Kitchen desk / menu</div><h1>Food items</h1><p>Keep dish details and dietary information up to date.</p></div><a class="btn" href="{{ url_for('admin.food_new') }}" data-testid="button-new-food">Add food item +</a></header>
+{% if error %}<div class="error-box" role="alert">{{ error }}</div>{% endif %}
+<section class="admin-panel">
+  <form class="filter-panel admin-filter" method="get" action="{{ url_for('admin.foods') }}" aria-label="Filter food items">
+    <div class="filter-grid">
+      <div class="field"><label for="food-search">Search dishes</label><input id="food-search" type="search" name="q" value="{{ query|default('') }}" placeholder="Search by name"></div>
+      <div class="field"><label for="food-category-filter">Category</label><select id="food-category-filter" name="category"><option value="">All categories</option>{% for category in categories|default([]) %}<option value="{{ category.id }}" {% if selected_category|string == category.id|string %}selected{% endif %}>{{ category.name }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="food-status-filter">Status</label><select id="food-status-filter" name="status"><option value="">All</option><option value="active" {% if selected_status == 'active' %}selected{% endif %}>Active</option><option value="inactive" {% if selected_status == 'inactive' %}selected{% endif %}>Hidden</option></select></div>
+      <button class="btn" type="submit">Apply filters</button><a class="btn btn-quiet" href="{{ url_for('admin.foods') }}">Clear</a>
+    </div>
+  </form>
+  {% if foods %}
+  <div class="table-wrap"><table><thead><tr><th>Dish</th><th>Category</th><th>Price</th><th>Dietary</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+  {% for food in foods %}<tr data-testid="row-food-{{ food.id }}">
+    <td><span class="table-title">{{ food.name }}</span><span class="table-sub">{{ food.description|default('',true)|truncate(58) }}</span></td>
+    <td>{{ food.category.name|default('Uncategorised') }}</td><td class="price">PKR {{ '%.0f'|format(food.price|default(0)|float) }}</td>
+    <td>{% if food.is_vegetarian %}<span class="category-tag">Vegetarian</span>{% endif %}{% for tag in food.dietary_tags|default([]) %}<span class="category-tag">{{ tag|replace('-', ' ')|title }}</span>{% endfor %}</td>
+    <td><span class="status {% if not food.is_active|default(true) %}off{% endif %}">{{ 'Active' if food.is_active|default(true) else 'Hidden' }}</span></td>
+    <td><div class="table-actions">
+      <a class="btn btn-small btn-quiet" href="{{ url_for('admin.food_edit', id=food.id) }}" data-testid="button-edit-food-{{ food.id }}">Edit</a>
+      <form class="inline-form" method="post" action="{{ url_for('admin.food_toggle', id=food.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-small btn-quiet" type="submit" data-testid="button-toggle-food-{{ food.id }}">{{ 'Hide' if food.is_active|default(true) else 'Show' }}</button></form>
+      <form class="inline-form" method="post" action="{{ url_for('admin.food_delete', id=food.id) }}" onsubmit="return confirm('Delete {{ food.name|e }}? This cannot be undone.');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn btn-small btn-danger" type="submit" data-testid="button-delete-food-{{ food.id }}">Delete</button></form>
+    </div></td>
+  </tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<div class="empty-state"><h3>Your menu starts with one good dish.</h3><p>Add the first food item, then schedule when it’s served.</p><a class="btn" href="{{ url_for('admin.food_new') }}">Add the first dish</a></div>{% endif %}
+</section>
+{% endblock %}
