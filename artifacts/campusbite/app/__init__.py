@@ -72,7 +72,8 @@ def create_app(test_config: dict | None = None) -> Flask:
             return "Not updated yet"
         if value.tzinfo is None:
             value = value.replace(tzinfo=timezone.utc)
-        return value.astimezone(ZoneInfo("Asia/Karachi")).strftime("%b %-d, %I:%M %p")
+        dt = value.astimezone(ZoneInfo("Asia/Karachi"))
+        return f"{dt.strftime('%b')} {dt.day}, {dt.strftime('%I:%M %p')}"
 
     @app.after_request
     def add_security_and_cache_headers(response):
